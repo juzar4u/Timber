@@ -1,0 +1,1636 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<style>
+    /*.table td {
+       font-family: cursive !important;
+    }*/
+
+    .zoomer {
+        zoom: 80%;
+        padding-top: 25px;
+    }
+
+    .page-break {
+        page-break-after: always;
+        page-break-inside: avoid;
+        clear: both;
+    }
+
+    .page-break-before {
+        page-break-before: always;
+        page-break-inside: avoid;
+        clear: both;
+    }
+
+    .hide {
+        display: none;
+    }
+</style>
+<div class="container">
+    <div id="app">
+
+        <div class="col-lg-12">
+            <div id="content" v-if="plywoodList.length || pinewoodList.length || bambooList.length || woodpropSellingList.length" class="zoomer">
+                <div id="plywoodCostSheet" v-if="plywoodList.length" class="row">
+                    <h4>Ply Cost Sheet</h4>
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Item</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="data in plywoodList" v-if="data.plytotal">
+                            <tr>
+                                <td>8 x 4 {{ data.plydetails }}</td>
+                                <td>8 x 4 x {{ data.plyprice }} = {{ data.plysheet }} </td>
+                                <td>{{ data.plyqty }}</td>
+                            </tr>
+                            <tr v-if="data.plytax">
+                                <th scope="row">Tax</th>
+                                <td colspan="2" style="text-align: center">{{ data.plytax }}%</td>
+                                <td class="hide"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Amount</th>
+                                <th scope="row" colspan="2" style="text-align: center">{{ data.plytotal }} /-</th>
+                                <td class="hide"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+                <div id="pineCostSheet" v-if="pinewoodList.length" class="row">
+                    <h4>Pine Cost Sheet</h4>
+                    <table class="table table-striped table-bordered responsive" style="zoom: 85%;">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Item</th>
+                                <th scope="col">Cft</th>
+                                <th scope="col">Rate</th>
+                                <th scope="col">Freight</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="pine in pinewoodList" v-if="pine.pinetotal">
+                            <tr>
+                                <td>{{ pine.pinewidth }}" (inch) x {{ pine.pineheight }}" (inch) x {{ pine.pinelength }}' (ft)</td>
+                                <td>{{ pine.cft }}</td>
+                                <td>{{ pine.ratecft }}</td>
+                                <td>{{ pine.frightcft }}</td>
+                                <td>{{ pine.pineitemprice }}</td>
+                                <td>{{ pine.pineqty }} </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Total cft</th>
+                                <td colspan="5" style="text-align: center">{{ pine.pinetotalCft }}</td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+                            <tr v-if="pinetax">
+                                <th scope="row">Tax</th>
+                                <td colspan="5" style="text-align: center">{{ pine.pinetax }}%</td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Amount</th>
+                                <th scope="row" colspan="5" style="text-align: center">{{ pine.pinetotal }} /-</th>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="6"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <div id="bambooCostSheet" v-if="bambooList.length" class="row">
+                    <h4>Bamboo Cost Sheet</h4>
+                    <table class="table table-striped table-bordered responsive">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Item</th>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Rate</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="bambooitem in bambooList">
+                            <tr v-for="bamboo in bambooitem.BambooItems" v-if="bambooitem.NetTotal">
+                                <td>{{ bamboo.Length_ft }}' (ft) {{ bamboo.Name }} Bamboo</td>
+                                <td>{{ bamboo.Qty }}</td>
+                                <td>{{ bamboo.ActualCostPrice }}</td>
+                                <td>{{ bamboo.ActualsellingTotal }}</td>
+                            </tr>
+
+                        </tbody>
+
+                        <tbody v-for="bambooitem in bambooList">
+                            <tr class="thead-dark">
+                                <th class=""></th>
+                                <th class=""></th>
+                                <th class=""></th>
+                                <th colspan="4">Amount</th>
+                            </tr>
+
+                            <tr>
+                                <th colspan="3">GrossTotal:</th>
+                                <th>{{ bambooitem.GrossTotal }}</th>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+                            <tr>
+                                <th colspan="3">Loading:</th>
+                                <th>{{ bambooitem.BambooLoading }}  </th>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+                            <tr>
+                                <th colspan="3">GST : {{ bambooitem.GstPercent }} %</th>
+                                <th>{{ bambooitem.GstValue }}</th>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+                            <tr>
+                                <th colspan="3">Other expense:</th>
+                                <th>{{ bambooitem.OtherExpense }}  </th>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+                            <tr>
+                                <th colspan="3">Total:</th>
+                                <th>{{ bambooitem.NetTotal }}  </th>
+                                <td class="hide"></td>
+                                <td class="hide"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="TekaCostSheet" v-if="woodpropSellingList.length" class="row">
+                    <h4>Wood prop Cost Sheet</h4>
+                    <table class="table table-striped table-bordered responsive">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Item</th>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Rate</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="prop in woodpropSellingList">
+                                <td>{{ prop.Item }}</td>
+                                <td>{{ prop.Qty }}</td>
+                                <td>{{ prop.Price }}</td>
+                                <td>{{ prop.Total }}</td>
+                            </tr>
+                            <tr>
+                                <th class=""></th>
+                                <th class=""></th>
+                                <th>Tax {{ woodpropsellinggstpercent }} %</th>
+                                <th>{{ woodpropsellinggstvalue }}</th>
+                            </tr>
+                            <tr>
+                                <th class=""></th>
+                                <th class=""></th>
+                                <th>Total</th>
+                                <th>{{ woodpropGrandTotal }}</th>
+                            </tr>
+                        </tbody>
+
+
+                    </table>
+                </div>
+                <table class="table">
+                    <tr>
+                        <th style="font-size: 25px; text-align: center">Total Amount:   {{ grandtotal }}/-
+                        </th>
+                    </tr>
+                </table>
+
+
+
+                <center style="margin-bottom: 50px">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="generate()">Download</button>
+                </center>
+            </div>
+            <div id="itemlist" style="padding-top:15px;">
+                <table class="table table-bordered responsive">
+                        <tbody>
+                            <tr class="thead-dark">
+                                <th style="text-align: center;" colspan="2" width="482">Ply</th>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <th>Item</th>
+                                <th>spec (KG)</th>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td rowspan="3">8 x 4 12mm</td>
+                                <td>30</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>34</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>24</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td rowspan="2">8 x 4 18 mm&nbsp;</td>
+                                <td>45</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>50</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td rowspan="2">8 x 4 25mm&nbsp;</td>
+                                <td>65</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>70</td>
+                            </tr>
+                            <tr class="thead-dark" style="text-align: center;">
+                                <th colspan="2">Pine</th>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <th>Item</th>
+                                <th>spec (CFT)</th>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>2.75" x 1.25" x 8'</td>
+                                <td>0.19</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>3" x 1.5" x 8'</td>
+                                <td>0.25</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>3.75" x 2.75" x 8'</td>
+                                <td>0.57</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>4" x 3" x 8'</td>
+                                <td>0.667</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>9" x 1.25" x 10'</td>
+                                <td>0.781</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>9" x 1.5" x 10'</td>
+                                <td>0.94</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>9" x 1.125" x 8'</td>
+                                <td>0.56</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>9" x 1.5" x 8'</td>
+                                <td>0.75</td>
+                            </tr>
+                            <tr class="thead-dark" style="text-align: center;">
+                                <th colspan="2">Bamboo</th>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <th>Item</th>
+                                <th>Spec(ft)</th>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td rowspan="2">Delex Bamboo</td>
+                                <td>24'&nbsp;</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>16'</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>Bullet Bamboo</td>
+                                <td>24'</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>Chaal Bamboo</td>
+                                <td>10pcs x 10'</td>
+                            </tr>
+                            <tr class="thead-dark" style="text-align: center;">
+                                <th colspan="2">Wood Prop(Teka)</th>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <th>Item</th>
+                                <th>Spec(ft)</th>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>Nilgiri</td>
+                                <td>8'</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>Nilgiri</td>
+                                <td>10'</td>
+                            </tr>
+                            <tr style="text-align: center;">
+                                <td>Nilgiri</td>
+                                <td>12'</td>
+                            </tr>
+                        </tbody>
+                </table>
+            </div>
+            <!-- Ply Modal -->
+            <div class="modal fade" id="plyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Ply wood</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="size">Size</label>
+                                        <input type="text" class="form-control" id="size" placeholder="Ply Size" value="8x4" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label for="specs">Specs</label>
+                                        <select id="specs" class="form-control" v-on:change="prodprice()">
+                                            <option v-for="ply in plywoods" v-bind:value="ply.cost_per_sqft">{{ ply.thickness }} - {{ ply.weight_KG }} KG</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="price">Price</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="price" placeholder="Price Per Sqft" v-model="plyprice" v-on:keyup="databind()">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="price_per_sheet">Price Per sheet</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="price_per_sheet" placeholder="Price Per sheet" v-model="plysheet" disabled>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="plyqty">QTY</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="plyqty" placeholder="Quantities" v-model="plyqty" v-on:keyup="databind()">
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="tax">Tax %</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="tax" placeholder="Tax" v-model="plytax" v-on:keyup="databind()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-group col-md-6">
+                                        <label for="total">Total Amount</label>
+                                        <input type="text" class="form-control" id="total" placeholder="Total Amount" v-model="plytotal" disabled>
+                                    </div>
+                                </div>
+                                <center>
+                                <button type="button" class="btn btn-success" data-dismiss="modal" v-on:click="insertplydata()">Save changes</button>
+                                </center>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Pine Modal -->
+            <div class="modal fade" id="pineModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel2">Pine wood</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-row">
+
+                                    <div class="form-group col-md-12">
+                                        <label for="pinespec">Specs</label>
+                                        <select id="pinespec" class="form-control" v-on:change="pineprice()">
+                                            <option v-for="pine in pinewoods" v-bind:value="pine.id">{{ pine.width_inch }} x {{ pine.height_inch }} x {{ pine.length_ft }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="pineWidth">Width"</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="pineWidth" placeholder="Width(inch)" v-model="pinewidth" v-on:keyup="pinedatabind()">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="pineheight">Height"</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="pineheight" placeholder="Height(inch)" v-model="pineheight" v-on:keyup="pinedatabind()">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="pineLength">Lenght'</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="pineLength" placeholder="Length(ft)" v-model="pinelength" v-on:keyup="pinedatabind()">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="cft">CFT</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="cft" placeholder="CFT" v-model="cft" disabled>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="rate_cft">Rate per CFT</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="rate_cft" placeholder="Rate per cft" v-model="ratecft" v-on:keyup="pinedatabind()">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="fright_cft">Freight per cft</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="fright_cft" placeholder="Rate per cft" v-model="frightcft" v-on:keyup="pinedatabind()">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="pineqty">Qty</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="pineqty" placeholder="Pine Qty" v-model="pineqty" v-on:keyup="pinedatabind()">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="pinetax">Tax %</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="pinetax" placeholder="Tax" v-model="pinetax" v-on:keyup="pinedatabind()">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="pinetotalCft">Total CFT </label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="pinetotalCft" placeholder="Tax" v-model="pinetotalCft" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-group col-md-6">
+                                        <label for="pinetotal">Total Amount</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="pinetotal" placeholder="Total Amount" v-model="pinetotal" disabled>
+                                    </div>
+                                </div>
+                                <center>
+                            <button type="button" id="pinesave" class="btn btn-success" data-dismiss="modal" v-on:click="insertpinedata()">Save changes</button>
+                    </center>
+                            </form>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Bamboo Modal -->
+            <div class="modal fade" id="bambooModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel3">Bamboo Cost Price Calculator</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+
+
+                                <div class="form-row">
+
+                                    <div class="form-group col-md-12">
+                                        <label class="radio-inline" style="margin-right: 100px">
+                                            <input type="radio" name="optradio" v-on:click="costingBamboo()">Costing</label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optradio" v-on:click="sellingBamboo()">Selling</label>
+
+                                    </div>
+
+                                </div>
+                                <div id="costcontainer" style="display: none">
+                                    <div class="form-row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="bambootruck">Truck</label>
+                                            <select id="bambootruck" class="form-control" v-on:change="bambooprice()">
+                                                <option value="10ton">10 Ton</option>
+                                                <option value="16ton">16 Ton</option>
+                                                <option value="19ton">19 Ton</option>
+                                                <option value="20ton">20 Ton</option>
+                                                <option value="21ton">21 Ton</option>
+                                                <option value="22ton">22 Ton</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="bamboofright">Freight</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboofright" placeholder="bamboofright" v-model="bamboofright" v-on:keyup="bambooloadingbind()">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+
+                                        <div class="form-group col-md-12">
+                                            <label for="bamboospecs">Specs</label>
+                                            <div class="input-group">
+                                                <select id="bamboospecs" class="form-control" v-on:change="bambooprice()">
+                                                    <option v-for="bamboo in bamboos" v-bind:value="bamboo.ID">{{ bamboo.Length_ft }}' ft - {{ bamboo.Name }} Bamboo</option>
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" v-on:click="addbamboo()">Add</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h5 v-if="bambooitems.length">Trunk Contains Following Items</h5>
+                                    <div class="form-row" style="background-color: lightgrey; padding: 31px; padding-top: 0px;" v-for="(item,index) in bambooitems">
+
+                                        <div class="form-group col-md-3 w-25">
+                                            <label for="bambooqty">QTY</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" placeholder="Quantities" v-bind:qty="index" v-on:keyup="bamboodatabind(index)">
+                                        </div>
+
+                                        <div class="form-group col-md-3 w-25">
+                                            <label for="bambooprice">Rate</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboorate" placeholder="Rate" v-bind:rate="index" v-model="item.Price" v-on:keyup="bamboodatabind(index)">
+                                        </div>
+
+                                        <div class="form-group col-md-3 w-50">
+                                            <label for="bambooitemtot">Total</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bambooitemtot" placeholder="Total" v-bind:tot="index" v-model="item.bambooitemtot" disabled>
+                                        </div>
+                                        <div class="form-group col-md-6" v-if="item.actualcost">
+                                            <label for="bambooac">Actual Cost</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bambooac" placeholder="ActualCost" v-model="item.ActualCostPrice" disabled style="font-weight: bold">
+                                        </div>
+
+
+                                    </div>
+                                    <div class="form-row" v-if="bambooGrossTotal" style="background-color: lightgrey; padding: 31px; padding-top: 0px;">
+                                        <div class="form-group col-md-6">
+                                            <label for="bambooGrossTotal">Gross Total</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bambooGrossTotal" placeholder="Gross Total" v-model="bambooGrossTotal" disabled style="font-weight: bold">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row" v-if="bambooGrossTotal" style="background-color: lightgrey; padding: 31px; padding-top: 0px;">
+                                        <div class="form-group col-md-6" v-if="bambooGrossTotal">
+                                            <label for="bambooloading">Bamboo Loading</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bambooloading" placeholder="bambooloading" v-model="bambooloading" v-on:keyup="bambooloadingbind()" style="font-weight: bold">
+                                        </div>
+
+
+                                        <div class="form-row" style="padding: 8px;">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>GST VALUE</th>
+                                                        <th>GST %</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboogstvalue" placeholder="bamboogstvalue" v-model="bamboogstvalue" v-on:keyup="gstvaluecalculation()"></td>
+                                                        <td>
+                                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboogstpercent" placeholder="bamboogstpercent" v-model="bamboogstpercent" v-on:keyup="gstpercentcalculation()"></td>
+
+
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+
+
+                                    </div>
+                                    <div class="form-row" style="background-color: lightgrey; padding: 31px; padding-top: 0px;" v-if="bambooGrossTotal">
+                                        <div class="form-group col-md-6">
+                                            <label for="bamboootherexp">Other expenses</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboootherexp" placeholder="other expense" v-model="bamboootherexp" v-on:keyup="bamboocalculation()">
+                                        </div>
+                                    </div>
+                                    <div class="form-row" style="border: 3px solid #ccc; background-color: lightgrey; padding: 31px; padding-top: 0px;" v-if="bambooNetTotal">
+                                        <div class="form-group col-md-12">
+                                            <h4 for="bambooNetTotal">Net Total + Freight</h4>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bambooNetTotal" placeholder="Gross Total" v-model="bambooNetTotal" disabled style="font-weight: bold">
+                                        </div>
+                                    </div>
+                                    <div class="form-row" style="padding: 8px; display: none" id="BambooFinalPriceTable">
+                                        <div class="form-group col-md-12 table">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Item</th>
+                                                        <th>Rate</th>
+                                                        <th>Qty</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="item in bambooitems">
+                                                        <td>{{item.Length_ft}}' {{item.Name}}</td>
+                                                        <td>{{item.ActualCostPrice}}</td>
+                                                        <td>{{item.Qty}}</td>
+                                                        <td>{{item.ActualTotal}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2">Total</td>
+                                                        <td colspan="2">{{bamboofinaltotal}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <center>
+                                    <button type="button" class="btn btn-primary" v-on:click="calculateBambooTot()" style="margin-top:20px;display:none" id="calculate">calculate</button>
+                                    <button type="button" class="btn btn-success" v-on:click="actualcostCal()" style="margin-top:20px;display:none" id="actualcostId">Actual Cost</button>
+                                </center>
+
+                                </div>
+
+                                <div id="sellingcontainer" style="display: none;">
+                                    <div class="form-row">
+
+                                        <div class="form-group col-md-12">
+                                            <label for="bamboospecs">Specs</label>
+                                            <div class="input-group">
+                                                <select id="bamboosellingspecs" class="form-control">
+                                                    <option v-for="bamboo in bamboos" v-bind:value="bamboo.ID">{{ bamboo.Length_ft }}' ft - {{ bamboo.Name }} Bamboo</option>
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" v-on:click="addbambooselling()">Add</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h5 v-if="bamboosellingitems.length">Bamboo Price Details</h5>
+                                    <div class="form-row" v-for="(item,index) in bamboosellingitems">
+
+                                        <div class="form-group col-md-4 w-25">
+                                            <label for="bambooqty">QTY</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" placeholder="Quantities" v-bind:sellingqty="index" v-on:keyup="bamboosellingdatabind(index)">
+                                        </div>
+
+                                        <div class="form-group col-md-4 w-25">
+                                            <label for="bambooprice">Rate</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="ActualCostPrice" placeholder="Rate" v-bind:sellingrate="index" v-model="item.ActualCostPrice" v-on:keyup="bamboosellingdatabind(index)">
+                                        </div>
+
+                                        <div class="form-group col-md-4 w-50">
+                                            <label for="ActualsellingTotal">Total <span class="badge badge-dark" style="font-style: italic;">{{item.DateOfActualPrice}}</span></label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="ActualsellingTotal" placeholder="Total" v-bind:sellingtot="index" v-model="item.ActualsellingTotal" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-row" v-if="bamboosellingGrossTotal">
+                                        <div class="form-group col-md-6">
+                                            <label for="bamboosellingGrossTotal">Gross Total</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboosellingGrossTotal" placeholder="Gross Total" v-model="bamboosellingGrossTotal" disabled style="font-weight: bold">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row" v-if="bamboosellingGrossTotal">
+                                        <div class="form-group col-md-6" v-if="bamboosellingGrossTotal">
+                                            <label for="bamboosellingloading">Bamboo Loading</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboosellingloading" placeholder="Loading" v-model="bamboosellingloading" v-on:keyup="bamboosellingloadingbind()" style="font-weight: bold">
+                                        </div>
+
+
+                                        <div class="form-row" style="padding: 8px;">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>GST VALUE</th>
+                                                        <th>GST %</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboosellinggstvalue" placeholder="bamboosellinggstvalue" v-model="bamboosellinggstvalue" v-on:keyup="gstSellingvaluecalculation()"></td>
+                                                        <td>
+                                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboosellinggstpercent" placeholder="bamboosellinggstpercent" v-model="bamboosellinggstpercent" v-on:keyup="gstSellingpercentcalculation()"></td>
+
+
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+
+
+                                    </div>
+                                    <div class="form-row" v-if="bamboosellingGrossTotal">
+                                        <div class="form-group col-md-6">
+                                            <label for="bamboosellingotherexp">Other expenses</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboosellingotherexp" placeholder="other expense" v-model="bamboosellingotherexp" v-on:keyup="bambooSellingcalculation()">
+                                        </div>
+                                    </div>
+                                    <div class="form-row" v-if="bamboosellingNetTotal">
+                                        <div class="form-group col-md-12">
+                                            <h4 for="bamboosellingNetTotal">Net Total</h4>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="bamboosellingNetTotal" placeholder="Gross Total" v-model="bamboosellingNetTotal" disabled style="font-weight: bold">
+                                        </div>
+                                    </div>
+                                    <center>
+                                    <button type="button" class="btn btn-primary" v-on:click="calculateSellingBambooTot()" style="margin-top:20px;display:none" id="calculateBtnSelling">calculate</button>
+                                    <button type="button" class="btn btn-success" v-on:click="bambooSaveBtn()" data-dismiss="modal" style="margin-top:20px">Save</button>
+                                </center>
+                                </div>
+
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- WoodProp(Teka) Modal -->
+            <div class="modal fade" id="WoodPropModal" tabindex="-1" role="dialog" aria-labelledby="WoodPropModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="WoodPropModalLabel">Wood Prop(Teka)</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+
+                                <div class="form-row">
+
+                                    <div class="form-group col-md-12">
+                                        <label class="radio-inline" style="margin-right: 100px">
+                                            <input type="radio" name="optradio" v-on:click="woodpropToggle(1)">Costing</label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optradio" v-on:click="woodpropToggle(2)">Selling</label>
+
+                                    </div>
+
+                                </div>
+                                <div id="costingProp" style="display: none;">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="pricePerMan">Price Per Mann</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="pricePerMan" placeholder="Price Per Mann" v-model="pricePerMan" v-on:keyup="dataWoodPropbind()">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="woodproptruck">Truck</label>
+                                            <select id="woodproptruck" class="form-control" v-on:change="woodpropprice()">
+                                                <option value="10ton">10 Ton</option>
+                                                <option value="16ton">16 Ton</option>
+                                                <option value="19ton">19 Ton</option>
+                                                <option value="20ton">20 Ton</option>
+                                                <option value="21ton">21 Ton</option>
+                                                <option value="22ton">22 Ton</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="WoodPropTrunkPrice">Wood Prop Trunk Price</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="WoodPropTrunkPrice" placeholder="Wood Prop Trunk Price" v-model="priceOfwoodpropTrunk" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-row" style="padding: 8px;">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>GST VALUE</th>
+                                                    <th>GST %</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="woodpropgstvalue" placeholder="woodpropgstvalue" v-model="woodpropgstvalue" v-on:keyup="woodpropgstcalculation()">
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="woodpropgstpercent" placeholder="woodpropgstpercent" v-model="woodpropgstpercent" v-on:keyup="woodpropgstpercentcalculation()">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            <label for="woodpropspecs">Specs</label>
+                                            <div class="input-group">
+                                                <select id="woodpropspecs" class="form-control" style="width: 40%">
+                                                    <option v-for="prop in woodprops" v-bind:value="prop.ID">{{ prop.Length_ft }}' ft - {{ prop.Name }} (Teka)</option>
+                                                </select>
+                                                <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" placeholder="Qty" v-bind:woodpropqty="0">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" v-on:click="addWoodProp()">Add</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row" style="padding: 8px;" v-if="WoodPropItems.length > 0 && priceOfwoodpropTrunk > 0">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Quantity</th>
+                                                    <th>Foot</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="prop in WoodPropItems">
+                                                    <td>{{ prop.Length_ft }}' ft - {{ prop.Name }} (Teka)</td>
+                                                    <td>{{ prop.TruckQty }}</td>
+                                                    <td>{{ prop.Foot }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                    <div class="form-row" style="padding: 8px;" v-if="WoodPropItemsWithPrice.length > 0 && priceOfwoodpropTrunk > 0">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Price of 1 pc</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="prop in WoodPropItemsWithPrice">
+                                                    <td>{{ prop.Length_ft }}' ft - {{ prop.Name }} (Teka)</td>
+                                                    <td>{{ prop.Price }}<span class="badge badge-dark" style="font-style: italic;float: right;">{{prop.PriceUpdatedOnString}}</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                    <center>
+                                <button type="button" class="btn btn-success" v-on:click="calculateWoodpropCost()" id="calculateWoodpropCost">Calculate</button>
+                                </center>
+                                </div>
+
+                                <div id="sellingProp" style="display: none">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            <label for="woodpropsellingspecs">Specs</label>
+                                            <div class="input-group">
+                                                <select id="woodpropsellingspecs" class="form-control" style="width: 40%">
+                                                    <option v-for="prop in woodprops" v-bind:value="prop.ID">{{ prop.Length_ft }}' ft - {{ prop.Name }} (Teka)</option>
+                                                </select>
+                                                <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" placeholder="Qty" v-bind:woodpropsellingqty="0">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" v-on:click="addWoodPropSelling()">Add</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row" v-for="(prop,index) in WoodPropSellingItems">
+
+                                        <div class="form-group col-md-3 w-25" hidden>
+                                            <label for="propspec">propspec</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" v-bind:propspec="index" placeholder="Quantity" v-model="prop.Full_name">
+                                        </div>
+
+                                        <div class="form-group col-md-3 w-25">
+                                            <label for="propqty">QTY</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" v-bind:propqty="index" placeholder="Quantity" v-model="prop.TruckQty" v-on:keyup="woodpropsellingCal(index)">
+                                        </div>
+
+                                        <div class="form-group col-md-3 w-25">
+                                            <label for="propprice">Rate</label>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" v-bind:propprice="index" placeholder="Price" v-model="prop.Price" v-on:keyup="woodpropsellingCal(index)">
+                                        </div>
+
+                                        <div class="form-group col-md-3 w-50">
+                                            <label for="proptotal">Total</label><span class="badge badge-dark" style="font-style: italic;float: right;">{{ prop.PriceUpdatedOnString }}</span></td>
+                                            <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" v-bind:proptotal="index" placeholder="Total" v-model="prop.Total" disabled>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group col-md-3 w-50" id="propsellingTaxId" style="display: none">
+                                        <label for="woodpropsellinggstpercent">Tax</label>
+                                        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" id="woodpropsellinggstpercent" placeholder="GST Percent" v-model="woodpropsellinggstpercent">
+                                    </div>
+
+                                    <center>
+                                <button type="button" class="btn btn-success" data-dismiss="modal" v-on:click="insertwoodprop()" id="insertwoodprop">Save</button>
+                                </center>
+                                </div>
+
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<script>
+    var base64Img = null;
+    //imgToBase64('octocat.jpg', function(base64) {
+    //    base64Img = base64; 
+    //});
+
+    margins = {
+        top: 70,
+        bottom: 40,
+        left: 30,
+        width: 550
+    };
+
+    generate = function()
+    {
+        var pdf = new jsPDF('p', 'pt', 'a4');
+        pdf.setFontSize(10);
+        pdf.fromHTML(document.getElementById('content'), 
+            margins.left, // x coord
+            margins.top,
+            {
+                // y coord
+                width: margins.width// max width of content on PDF
+            },function(dispose) {
+                headerFooterFormatting(pdf, pdf.internal.getNumberOfPages());
+            }, 
+            margins);
+		
+        pdf.save("caravan.pdf");
+    };
+    function headerFooterFormatting(doc, totalPages)
+    {
+        for(var i = totalPages; i >= 1; i--)
+        {
+            doc.setPage(i);                            
+            //header
+            if(i == 1)
+                header(doc);
+            else
+                doc.tableHeaderRow = []
+            footer(doc, i, totalPages);
+            doc.page++;
+        }
+    };
+
+    function header(doc)
+    {
+        doc.setFontSize(30);
+        doc.setTextColor(40);
+        doc.setFontStyle('normal');
+	
+        //if (base64Img) {
+        //    doc.addImage(base64Img, 'JPEG', margins.left, 10, 40,40);        
+        //}
+	    
+        doc.text("S & S Timber Associates", margins.left + 50, 40 );
+        doc.setLineCap(2);
+        doc.line(3, 70, margins.width + 43,70); // horizontal line
+    };
+
+    // You could either use a function similar to this or pre convert an image with for example http://dopiaza.org/tools/datauri
+    // http://stackoverflow.com/questions/6150289/how-to-convert-image-into-base64-string-using-javascript
+    function imgToBase64(url, callback, imgVariable) {
+ 
+        if (!window.FileReader) {
+            callback(null);
+            return;
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = function() {
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                imgVariable = reader.result.replace('text/xml', 'image/jpeg');
+                callback(imgVariable);
+            };
+            reader.readAsDataURL(xhr.response);
+        };
+        xhr.open('GET', url);
+        xhr.send();
+    };
+
+    function footer(doc, pageNumber, totalPages){
+
+        var str = "Page " + pageNumber + " of " + totalPages
+   
+        doc.setFontSize(10);
+        doc.text(str, margins.left, doc.internal.pageSize.height - 20);
+    
+    };
+    
+    var propgstValue = 0;
+    var proptotal = 0;
+    new Vue({
+        el: '#app',
+        data: {
+            plywoods: [],
+            bamboos: [],
+            woodpropList:[],
+            woodprops:[],
+            plywoodList: [],
+            pinewoodList: [],
+            plyprice: 42,
+            plyqty: '',
+            plytax: '',
+            plysheet: '',
+            plydetails: '',
+            plytotal: '',
+            pinewoods: [],
+            pinewoodfilter: '',
+            pinewidth: '',
+            pineheight: '',
+            pinelength: '',
+            cft: '',
+            ratecft: '',
+            frightcft: '',
+            pineqty: '',
+            pinetax: '',
+            pinetotal: '',
+            pinetotalCft: '',
+            pineitemprice:'',
+            totalprice:'',
+            grandtotal:0,
+            bamboofright:'',
+            bambooitems:[],
+            bambooTotal:0,
+            bambooGrossTotal:0,
+            bambooloading:'',
+            bamboosellingloading:0,
+            bamboogstvalue:'',
+            bamboogstpercent:'',
+            bamboosellinggstvalue:'',
+            bamboosellinggstpercent:'',
+            woodpropgstvalue:0,
+            woodpropgstpercent:0,
+            woodpropsellinggstvalue:0,
+            woodpropsellinggstpercent:0,
+            bamboootherexp:0,
+            bamboosellingotherexp:0,
+            bambooNetTotal:0,
+            bamboosellingNetTotal:0,
+            bamboofinaltotal:0,
+            bamboosellingitems:[],
+            bamboosellingGrossTotal:0,
+            bambooList:[],
+            WoodPropItems:[],
+            WoodPropSellingItems:[],
+            woodpropSellingList:[],
+            WoodPropItemsWithPrice:[],
+            pricePerMan:0,
+            priceOfwoodpropTrunk:0,
+            woodpropTotalFoot:0,
+            woodpropPricePerFoot:0,
+            woodpropGrandTotal:0
+        },
+        methods: {
+            databind: function () {
+                var vm = this
+                vm.plysheet = vm.plyprice * 32
+                vm.plytotal = vm.plysheet * vm.plyqty + (vm.plysheet * vm.plyqty) * (vm.plytax/100)
+            },
+            prodprice : function(){
+                var vm = this
+                var price = $("#specs :selected").val();
+                vm.plydetails = $("#specs :selected").text();
+                vm.plyprice = price;
+                vm.plysheet = vm.plyprice * 32
+                vm.plytotal = vm.plysheet * vm.plyqty + (vm.plysheet * vm.plyqty) * (vm.plytax/100)
+            },
+            insertplydata : function(){
+                var vm = this
+                vm.grandtotal = parseInt(vm.grandtotal) + parseInt(vm.plytotal);
+                vm.plywoodList.push({
+                    plydetails:$("#specs :selected").text(),
+                    plyprice:vm.plyprice,
+                    plysheet:vm.plysheet,
+                    plyqty:vm.plyqty,
+                    plytax:vm.plytax,
+                    plytotal:vm.plytotal
+                })
+                if( isMobile.any() ) {
+                    //$(".container").addClass('zoomer');
+                }
+                console.log("Grand Total: "+ vm.grandtotal)
+            },
+            insertpinedata: function(){
+                var vm = this
+                vm.grandtotal = parseInt(vm.grandtotal) + parseInt(vm.pinetotal);
+                vm.pinewoodList.push({
+                    pinewidth:vm.pinewidth,
+                    pineheight :vm.pineheight,
+                    pinelength :vm.pinelength,
+                    pineqty :vm.pineqty,
+                    cft:vm.cft,
+                    ratecft :vm.ratecft,
+                    frightcft :vm.frightcft,
+                    pinetotalCft:vm.pinetotalCft,
+                    pinetax:vm.pinetax,
+                    pineitemprice:vm.pineitemprice.toFixed(3),
+                    pinetotal:vm.pinetotal 
+                })
+                if( isMobile.any() ) {
+                    // $(".container").addClass('zoomer');
+                }
+                console.log("Grand Total: "+ vm.grandtotal)
+            },
+            pinedatabind : function(){
+                var vm = this
+                vm.cft = (vm.pinewidth * vm.pineheight * vm.pinelength) / 144
+                vm.cft = vm.cft.toFixed(3)
+                vm.pinetotalCft = vm.cft * vm.pineqty
+                vm.pinetotalCft = vm.pinetotalCft.toFixed(3)
+                vm.pineitemprice = vm.cft * (parseInt(vm.ratecft) + parseInt(vm.frightcft))
+                var tot = vm.cft * (parseInt(vm.ratecft) + parseInt(vm.frightcft)) * vm.pineqty
+                vm.pinetotal = parseInt(tot) + parseInt(tot * (vm.pinetax / 100))
+                vm.pinetotal = vm.pinetotal.toFixed(3)
+            },
+            pineprice : function(){
+                var vm = this
+                var pinespecId = $("#pinespec :selected").val();
+                axios.get('/api/getpinewooddetail/' + pinespecId)
+                  .then(function (response) {
+                      vm.pinewoodfilter = response.data
+                      vm.pinewidth = vm.pinewoodfilter.width_inch
+                      vm.pineheight = vm.pinewoodfilter.height_inch
+                      vm.pinelength = vm.pinewoodfilter.length_ft
+                      vm.cft = (vm.pinewidth * vm.pineheight * vm.pinelength) / 144
+                      vm.cft = vm.cft.toFixed(3)
+                      vm.ratecft = vm.pinewoodfilter.rate
+                      vm.frightcft = vm.pinewoodfilter.fright
+                      vm.pineqty = 1
+                      vm.pinetotalCft = vm.cft * vm.pineqty
+                      vm.pinetotalCft = vm.pinetotalCft.toFixed(3)
+                      vm.pineitemprice = vm.cft * (parseInt(vm.ratecft) + parseInt(vm.frightcft))
+                      var tot = vm.cft * (parseInt(vm.ratecft) + parseInt(vm.frightcft)) * vm.pineqty
+                      vm.pinetotal = parseInt(tot) + parseInt(tot * (vm.pinetax / 100))
+                      vm.pinetotal = vm.pinetotal.toFixed(3)
+                  })
+            },
+
+            bambooprice: function(){
+                var vm = this
+                vm.bamboofright = getBambooFright($("#bambootruck :selected").val())
+            },
+            costingBamboo: function(){
+                $("#costcontainer").css('display','block');
+                $("#sellingcontainer").css('display','none');
+                $("#calculate").css('display','block');
+                
+
+            },
+            sellingBamboo: function(){
+                $("#costcontainer").css('display','none');
+                $("#sellingcontainer").css('display','block');
+                $("#calculateBtnSelling").css('display','block');
+            },
+            addbamboo: function(){
+                var vm = this
+                axios.get('/api/getbamboodetail/'+ $("#bamboospecs :selected").val())
+                   .then(function (response) {
+                       
+                       //vm.bambooTotal = parseInt(vm.bambooTotal) + parseInt(vm.bambooitemtot)
+                       vm.bambooitems.push({
+                           bambooitemtot:vm.bambooitemtot,
+                           id:response.data.ID,
+                           Name:response.data.Name,
+                           Length_ft:response.data.Length_ft,
+                           Price:response.data.Price,
+                           ActualCostPrice:0,
+                           ActualTotal:0,
+                           Qty:0
+                       });
+                   })
+                
+            },
+            addbambooselling: function(){
+                var vm = this
+                axios.get('/api/getbamboodetail/'+ $("#bamboosellingspecs :selected").val())
+                   .then(function (response) {
+                       
+                       //vm.bambooTotal = parseInt(vm.bambooTotal) + parseInt(vm.bambooitemtot)
+                       vm.bamboosellingitems.push({
+                           id:response.data.ID,
+                           Name:response.data.Name,
+                           Length_ft:response.data.Length_ft,
+                           Price:response.data.Price,
+                           ActualCostPrice:response.data.ActualPrice,
+                           DateOfActualPrice:response.data.DateStringActualPrice,
+                           ActualTotal:0,
+                           Qty:0
+                       });
+                   })
+                console.log(vm.bamboosellingitems)
+                
+            },
+            bamboodatabind: function(ind){
+                var vm = this
+                
+                vm.bambooitems[ind].bambooitemtot = $("[qty="+ind +"]").val() * $("[rate="+ind +"]").val();
+                
+                console.log("GrossTotal" + parseInt(vm.bambooGrossTotal));
+               
+            },
+            bamboosellingdatabind: function(ind){
+                var vm = this
+                vm.bamboosellingitems[ind].Qty = $("[sellingqty="+ind +"]").val();
+                vm.bamboosellingitems[ind].ActualsellingTotal = $("[sellingqty="+ind +"]").val() * $("[sellingrate="+ind +"]").val();
+                $("[sellingtot="+ind +"]").val(vm.bamboosellingitems[ind].ActualsellingTotal)
+                
+            },
+            bambooloadingbind: function(){
+                var vm = this;
+                
+                vm.bambooNetTotal = parseInt(vm.bambooloading) + parseInt(vm.bamboogstvalue) + parseInt(vm.bamboootherexp) + parseInt(vm.bambooGrossTotal) + parseInt(vm.bamboofright);
+
+            },
+            bamboosellingloadingbind: function(){
+                var vm = this;
+                
+                vm.bamboosellingNetTotal = parseInt(vm.bamboosellingloading) + parseInt(vm.bamboosellinggstvalue) + parseInt(vm.bamboosellingotherexp) + parseInt(vm.bamboosellingGrossTotal);
+
+            },
+            calculateBambooTot:function(){
+                $("#calculate").css('display','none');
+                var vm = this;
+                for(var i = 0; i < vm.bambooitems.length; i++){
+                    vm.bambooGrossTotal += parseInt(vm.bambooitems[i].bambooitemtot)
+                }
+                if(vm.bambooGrossTotal > 0 )
+                {
+                    //var nettotal = parseInt(vm.bambooloading) + parseInt(vm.bambooGrossTotal);
+                    vm.bamboogstvalue = 4000;
+                    var percent = (4000 / vm.bambooGrossTotal) * 100
+                    vm.bamboogstpercent = percent.toFixed(3);
+                    vm.bambooNetTotal = parseInt(vm.bambooloading) + parseInt(vm.bamboogstvalue) + parseInt(vm.bamboootherexp) + parseInt(vm.bambooGrossTotal) + parseInt(vm.bamboofright);
+                    $("#actualcostId").css('display','block');
+                }
+                
+            },
+            calculateSellingBambooTot:function(){
+                $("#calculateBtnSelling").css('display','none');
+                var vm = this;
+                for(var i = 0; i < vm.bamboosellingitems.length; i++){
+                    vm.bamboosellingGrossTotal += parseInt(vm.bamboosellingitems[i].ActualsellingTotal)
+                }
+                if(vm.bamboosellingGrossTotal > 0 )
+                {
+                    vm.bamboosellinggstvalue = vm.bamboosellingGrossTotal * 18 / 100;
+                    var percent = 18
+                    vm.bamboosellinggstpercent = percent.toFixed(3);
+                    vm.bamboosellingNetTotal = parseInt(vm.bamboosellingloading) + parseInt(vm.bamboosellinggstvalue) + parseInt(vm.bamboosellingotherexp) + parseInt(vm.bamboosellingGrossTotal);
+                    $("#actualcostId").css('display','block');
+                }
+                
+            },
+            bamboocalculation:function(){
+                var vm = this;
+                vm.bambooNetTotal = parseInt(vm.bambooloading) + parseInt(vm.bamboogstvalue) + parseInt(vm.bamboootherexp) + parseInt(vm.bambooGrossTotal) + parseInt(vm.bamboofright);
+            },
+            bambooSellingcalculation:function(){
+                var vm = this;
+                vm.bamboosellingNetTotal = parseInt(vm.bamboosellingloading) + parseInt(vm.bamboosellinggstvalue) + parseInt(vm.bamboosellingotherexp) + parseInt(vm.bamboosellingGrossTotal);
+
+            },
+            gstvaluecalculation:function(){
+                var vm = this;
+                vm.bamboogstpercent = (vm.bamboogstvalue / vm.bambooGrossTotal) * 100;
+                vm.bamboogstpercent = vm.bamboogstpercent.toFixed(3);
+                vm.bambooloadingbind();
+            },
+            gstSellingvaluecalculation:function(){
+                var vm = this;
+                vm.bamboosellinggstpercent = (vm.bamboosellinggstvalue / vm.bamboosellingGrossTotal) * 100;
+                vm.bamboosellinggstpercent = vm.bamboosellinggstpercent.toFixed(3);
+                vm.bamboosellingloadingbind();
+            },
+            gstpercentcalculation:function(){
+                var vm = this;
+                vm.bamboogstvalue = vm.bambooGrossTotal * (vm.bamboogstpercent/100);
+                //vm.bambooGrossTotal += parseInt(vm.bamboogstvalue);
+            },
+            gstSellingpercentcalculation:function(){
+                var vm = this;
+                vm.bamboosellinggstvalue = vm.bamboosellingGrossTotal * (vm.bamboosellinggstpercent/100);
+                //vm.bambooGrossTotal += parseInt(vm.bamboogstvalue);
+            },
+            actualcostCal:function(){
+                var vm = this;
+                
+                vm.bamboofinaltotal = 0;
+                for(var i = 0; i < vm.bambooitems.length ; i++)
+                {
+                    var percent = vm.bambooitems[i].bambooitemtot / vm.bambooGrossTotal * 100;
+                    percent = percent.toFixed(3);
+                    var qty = vm.bambooitems[i].bambooitemtot / vm.bambooitems[i].Price
+                    var rate = (vm.bambooNetTotal * percent / 100) / (qty);
+                    vm.bambooitems[i].ActualCostPrice = Math.round(rate);
+                    vm.bambooitems[i].ActualTotal = vm.bambooitems[i].ActualCostPrice * qty;
+                    vm.bambooitems[i].Qty = qty;
+                    vm.bamboofinaltotal += vm.bambooitems[i].ActualTotal;
+                    $("#BambooFinalPriceTable").css('display','block');
+                    axios.post('/api/addBamboo/?id='+parseInt(vm.bambooitems[i].id) + "&ac="+parseInt(vm.bambooitems[i].ActualCostPrice));
+                }
+                toastr.success('Cost Price Updated');
+            },
+            bambooSaveBtn: function(){
+                var vm = this;
+                vm.grandtotal = parseInt(vm.grandtotal) + parseInt(vm.bamboosellingNetTotal);
+                vm.bambooList.push({
+                    GrossTotal: vm.bamboosellingGrossTotal,
+                    BambooLoading: vm.bamboosellingloading,
+                    GstValue: vm.bamboosellinggstvalue,
+                    GstPercent: vm.bamboosellinggstpercent,
+                    OtherExpense: vm.bamboosellingotherexp,
+                    NetTotal:vm.bamboosellingNetTotal,
+                    BambooItems:vm.bamboosellingitems
+                });
+                if( isMobile.any() ) {
+                    // $(".container").addClass('zoomer');
+                }
+                console.log(vm.bambooList)
+            },
+            woodpropprice: function(){
+                var vm = this
+                vm.priceOfwoodpropTrunk = 0;
+                var kg = tonsToKG($("#woodproptruck :selected").val());
+                var pricePerKG = vm.pricePerMan / 20;
+                vm.priceOfwoodpropTrunk = kg * pricePerKG;
+                propgstValue = 0;
+                proptotal = vm.priceOfwoodpropTrunk;
+            },
+            dataWoodPropbind: function(){
+                var vm = this
+                vm.priceOfwoodpropTrunk = 0;
+                var kg = tonsToKG($("#woodproptruck :selected").val());
+                var pricePerKG = vm.pricePerMan / 20;
+                vm.priceOfwoodpropTrunk = kg * pricePerKG;
+                propgstValue = 0;
+                proptotal = vm.priceOfwoodpropTrunk;
+            },
+            woodpropgstcalculation : function(){
+                var vm = this
+                if(vm.woodpropgstvalue > 0){
+                    vm.woodpropgstpercent = vm.woodpropgstvalue / proptotal * 100;
+                }
+                else{
+                    vm.woodpropgstpercent = 0
+                }
+                vm.priceOfwoodpropTrunk = parseInt(vm.woodpropgstvalue) + parseInt(proptotal);
+            },
+            woodpropgstpercentcalculation : function(){
+                var vm = this
+                if(vm.woodpropgstpercent > 0){
+                    vm.woodpropgstvalue = proptotal * vm.woodpropgstpercent / 100;
+                }
+                else{
+                    vm.woodpropgstvalue = 0
+                }
+                vm.priceOfwoodpropTrunk = parseInt(vm.woodpropgstvalue) + parseInt(proptotal);
+            },
+            addWoodProp: function(){
+                var vm = this
+                if(vm.priceOfwoodpropTrunk > 0){
+                    axios.get('/api/getwoodpropdetail/'+ $("#woodpropspecs :selected").val())
+                       .then(function (response) {
+                       
+                           vm.WoodPropItems.push({
+                               id:response.data.ID,
+                               Name:response.data.Name,
+                               Length_ft:response.data.Length_ft,
+                               Price:response.data.Price,
+                               PriceUpdatedOn: response.PriceUpdatedOn,
+                               TruckQty:parseInt($("[woodpropqty=0]").val()),
+                               Foot: parseInt($("[woodpropqty=0]").val()) * response.data.Length_ft
+                           });
+                       })
+                    toastr.success('Added Successfully');
+                }
+                else{
+                    toastr.error('Error: Trunk price 0');
+                }
+                console.log(vm.WoodPropItems);
+                
+            },
+            addWoodPropSelling: function(){
+                var vm = this
+                $("#propsellingTaxId").css('display','block');
+                axios.get('/api/getwoodpropdetail/'+ $("#woodpropsellingspecs :selected").val())
+                   .then(function (response) {
+                       
+                       vm.WoodPropSellingItems.push({
+                           id:response.data.ID,
+                           Name:response.data.Name,
+                           Length_ft:response.data.Length_ft,
+                           Full_name: response.data.Length_ft + "'(ft) " + response.data.Name + " Teka",
+                           Price:response.data.Price,
+                           PriceUpdatedOnString: response.data.PriceUpdatedOnString,
+                           TruckQty:parseInt($("[woodpropsellingqty=0]").val()),
+                           Total: parseInt($("[woodpropsellingqty=0]").val()) * response.data.Price
+                       });
+                   })
+                toastr.success('Added Successfully');
+                
+                console.log(vm.WoodPropSellingItems);
+                
+            },
+            calculateWoodpropCost: function(){
+                var vm = this;
+                var totalFoot = 0;
+                for(var i = 0; i < vm.WoodPropItems.length; i++){
+                    totalFoot += vm.WoodPropItems[i].Foot;
+                }
+                console.log("totalFoot" + totalFoot);
+                vm.woodpropTotalFoot = totalFoot;
+                vm.woodpropPricePerFoot = vm.priceOfwoodpropTrunk / totalFoot;
+                console.log("PricePerFoot" + vm.woodpropPricePerFoot);
+                for(var i = 0; i < vm.WoodPropItems.length; i++){
+                    var itemCost = vm.WoodPropItems[i].Foot * vm.woodpropPricePerFoot / vm.WoodPropItems[i].TruckQty;
+                    console.log("itemCost" + itemCost);
+                    axios.post('/api/addWoodProp/?id='+parseInt(vm.WoodPropItems[i].id) + "&ac="+parseInt(Math.round(itemCost)));
+                }
+                axios.get('/api/GetWoodPropWithPrice')
+                  .then(function (response) {
+                      vm.WoodPropItemsWithPrice = response.data
+                  })
+
+                toastr.success('Cost Price Updated');
+            },
+            woodpropToggle:function(val){
+                if(val == 1)
+                {
+                    $("#costingProp").css('display','block');
+                    $("#sellingProp").css('display','none');
+                }
+                else
+                {
+                    $("#sellingProp").css('display','block');
+                    $("#costingProp").css('display','none');
+                }
+                console.log(val);
+            },
+            woodpropsellingCal: function(ind){
+                var vm = this
+                
+                vm.WoodPropSellingItems[ind].Total = $("[propqty="+ind +"]").val() * $("[propprice="+ind +"]").val();
+                
+                console.log("GrossTotal" + parseInt(vm.bambooGrossTotal));
+            },
+            insertwoodprop : function(){
+                var vm = this
+                var GrandTotal = 0;
+                var gstvalue = 0;
+                for(var i = 0; i < vm.WoodPropSellingItems.length; i++){
+                    vm.woodpropSellingList.push({
+                        Item: vm.WoodPropSellingItems[i].Full_name,
+                        Qty: $("[propqty="+i +"]").val(),
+                        Price: $("[propprice="+i +"]").val(),
+                        Total: $("[proptotal="+i +"]").val(),
+                        GrandTotal: GrandTotal += parseInt($("[proptotal="+i +"]").val())
+                    });
+                }
+                GrandTotal = vm.woodpropSellingList[parseInt(vm.WoodPropSellingItems.length - 1)].GrandTotal;
+                vm.woodpropsellinggstvalue = GrandTotal * vm.woodpropsellinggstpercent / 100;
+                vm.woodpropGrandTotal = GrandTotal + vm.woodpropsellinggstvalue;
+                vm.grandtotal = parseInt(vm.grandtotal) + parseInt(vm.woodpropGrandTotal);
+                console.log(vm.woodpropSellingList);
+            }
+        },
+        created () {
+            var vm = this
+            axios.get('/api/getplywood')
+              .then(function (response) {
+                  vm.plywoods = response.data
+                  vm.plyqty = 1 
+                  vm.plysheet = vm.plyprice * 32
+                  vm.plytotal = vm.plysheet * vm.plyqty + (vm.plysheet * vm.plyqty) * (vm.plytax/100)
+              })
+    axios.get('/api/getpinewood')
+      .then(function (response) {
+          vm.pinewoods = response.data
+      })
+
+    axios.get('/api/getpinewooddetail/1')
+            .then(function (response) {
+                vm.pinewoodfilter = response.data
+                vm.pinewidth = vm.pinewoodfilter.width_inch
+                vm.pineheight = vm.pinewoodfilter.height_inch
+                vm.pinelength = vm.pinewoodfilter.length_ft
+                vm.cft = (vm.pinewidth * vm.pineheight * vm.pinelength) / 144
+                vm.cft = vm.cft.toFixed(3)
+                vm.ratecft = vm.pinewoodfilter.rate
+                vm.frightcft = vm.pinewoodfilter.fright
+                vm.pineqty = 1
+                vm.pinetotalCft = vm.cft * vm.pineqty
+                vm.pinetotalCft = vm.pinetotalCft.toFixed(3)
+                vm.pineitemprice = vm.cft * (parseInt(vm.ratecft) + parseInt(vm.frightcft))
+                var tot = vm.cft * (parseInt(vm.ratecft) + parseInt(vm.frightcft)) * vm.pineqty
+                vm.pinetotal = parseInt(tot) + parseInt(tot * (vm.pinetax / 100))
+                vm.pinetotal = vm.pinetotal.toFixed(3)
+            })
+    axios.get('/api/getbamboo')
+      .then(function (response) {
+          vm.bamboos = response.data
+          vm.bambooloading = 2500;
+          vm.bamboofright = 45000;
+      })
+
+    axios.get('/api/getwoodprop')
+      .then(function (response) {
+          vm.woodprops = response.data
+      })
+
+    console.log(vm.plywoodList.length);
+    }
+    })
+
+    var isMobile = {
+        Android: function() {
+            return navigator.userAgent.match(/Android/i);
+        },
+        BlackBerry: function() {
+            return navigator.userAgent.match(/BlackBerry/i);
+        },
+        iOS: function() {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+        },
+        Opera: function() {
+            return navigator.userAgent.match(/Opera Mini/i);
+        },
+        Windows: function() {
+            return navigator.userAgent.match(/IEMobile/i);
+        },
+        any: function() {
+            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+        }
+    };
+
+    $(document).ready(function(){
+        if( isMobile.any() ) {
+            // $(".container").addClass('zoomer');
+        }
+    });
+
+    $(".nav-item").click(function(){
+        //if($(".container").hasClass('zoomer')){
+        //    $(".container").removeClass('zoomer');
+        //}
+        if($(".navbar-collapse").hasClass('show')){
+            $(".navbar-collapse").removeClass('show');
+            $(".container").removeClass('zoomer');
+        }
+    });
+    //function generate() {
+    //    $.ajax({
+    //        url: "/Home/PdfSharpConvert",
+    //        type: "GET",
+    //        dataType : 'text',
+    //        contentType : 'application/pdf',
+    //        data: { "html": $("#content").html },
+    //        success: function (data) {
+    //            $(".container").html(data);
+    //        }
+    //    });
+    //}
+    var bambooItemIndex = 1;
+    var bamboofright;
+    function getBambooFright(ele){
+        var intele = ele.replace("ton","");
+        return intele * 4500;
+
+    }
+
+    function tonsToKG(ele){
+        var intele = ele.replace("ton","");
+        return intele * 1000;
+
+    }
+</script>
